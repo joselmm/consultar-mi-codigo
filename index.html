@@ -70,6 +70,11 @@
       cursor: pointer; transition: background-color 0.3s ease;
     }
     #codeContainer button:hover { background-color: #218838; }
+    #estimatedTimeAgo{
+      margin-top:20px;
+      margin-bottom:20px;
+        opacity:0.6
+    }
   </style>
 </head>
 <body>
@@ -84,7 +89,9 @@
     </form>
   </div>
   <div id="codeContainer">
+    
     <h2 id="codeAbout"></h2>
+    <h4 id="estimatedTimeAgo"></h4>
     <div class="code" id="codeValue"></div>
     <button onclick="copiarCodigo()">copiar</button>
   </div>
@@ -104,9 +111,11 @@
         const data = await response.json();
         document.getElementById("overlay").style.display = "none";
         if (data.noError) {
+          document.querySelector("#estimatedTimeAgo").innerText=data.estimatedTimeAgo;
           document.getElementById("codeAbout").innerText = data.about;
           document.getElementById("codeValue").innerText = data.code;
           document.getElementById("codeContainer").style.display = "block";
+document.getElementById("codeContainer").scrollIntoView(false);
         } else {
           Toastify({ text: data.message || "Ocurrió un error", duration: 3000, gravity: "top", position: "right", backgroundColor: "#dc3545" }).showToast();
         }
