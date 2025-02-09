@@ -76,11 +76,11 @@
   <h1>Consulta tu Código</h1>
   <div class="container">
     <form id="contactForm" onsubmit="event.preventDefault(); consultarCodigo();">
-      <label for="whatsapp">escribe aqui el numero de whatsapp sin prefijos ni espacios con el que le hablas a el vendedor de cuentas</label>
-      <input type="text" id="whatsapp" required placeholder="Ej: 123456789" onkeyup="this.value = this.value.replace(/\s/g, '')">
-      <label for="email">pega aqui el email al que envio el email</label>
-      <input type="email" id="email" required placeholder="ejemplo@dominio.com" onkeyup="this.value = this.value.replace(/\s/g, '')">
-      <button type="submit">consultar codigo</button>
+      <label for="whatsapp">Escribe tu whatsapp con el que normalmente hablas al vendedor</label>
+      <input type="text" id="whatsapp" required placeholder="Ej: 3138936926" onkeyup="this.value = this.value.replace(/\s/g, '')">
+      <label for="email">Pega aquí el Correo al que se envió el código</label>
+      <input type="email" id="email" required placeholder="eduardomaldona23@gmail.com" onkeyup="this.value = this.value.replace(/\s/g, '')">
+      <button type="submit">Consultar código</button>
     </form>
   </div>
   <div id="codeContainer">
@@ -138,7 +138,28 @@
           }).showToast();
         });
     }
-    
+
+    // Al cargar el DOM, se agregan los listeners para guardar en localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+      const whatsappInput = document.getElementById("whatsapp");
+      const emailInput = document.getElementById("email");
+
+      // Cargar valores almacenados (si existen)
+      if (localStorage.getItem("whatsapp")) {
+        whatsappInput.value = localStorage.getItem("whatsapp");
+      }
+      if (localStorage.getItem("email")) {
+        emailInput.value = localStorage.getItem("email");
+      }
+
+      // Guardar en localStorage cada vez que cambie el valor de los campos
+      whatsappInput.addEventListener("change", function() {
+        localStorage.setItem("whatsapp", this.value);
+      });
+      emailInput.addEventListener("change", function() {
+        localStorage.setItem("email", this.value);
+      });
+    });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
