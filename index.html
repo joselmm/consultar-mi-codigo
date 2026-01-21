@@ -287,10 +287,10 @@
           document.getElementById("codeContainer").scrollIntoView(false);
 
 
-          fetch(`https://geo-ip-gydp.onrender.com?ts=${new Date().getTime()}&email=${encodeURIComponent(email)}&contact=${data.contact}&noError=true&message=${encodeURIComponent(data.about)}&from=jose&about=${encodeURIComponent(data.about)}&${data.code ? "code=" + data.code : "link=" + encodeURIComponent(data.link)}`)
+         /*  fetch(`https://geo-ip-gydp.onrender.com?ts=${new Date().getTime()}&email=${encodeURIComponent(email)}&contact=${data.contact}&noError=true&message=${encodeURIComponent(data.about)}&from=jose&about=${encodeURIComponent(data.about)}&${data.code ? "code=" + data.code : "link=" + encodeURIComponent(data.link)}`)
             .then(e => e.text())
-            /* .then(e=>console.log(e)) */
-            .catch(e => console.log(e))
+             .then(e=>console.log(e)) 
+            .catch(e => console.log(e)) */
         } else {
 
           Toastify({ text: data.message || "Ocurrió un error", duration: 6000, gravity: "top", position: "right", backgroundColor: "#dc3545" }).showToast();
