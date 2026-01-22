@@ -246,6 +246,49 @@
     </div>
   </div>
   <script>
+    let retriedOnce = false;
+    let submitBtn;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      submitBtn = document.querySelector('#contactForm button[type="submit"]');
+      setSubmitEnabled(true);
+    });
+   
+    function setSubmitEnabled(enabled) {
+      submitBtn.disabled = !enabled;
+      submitBtn.style.opacity = enabled ? "1" : "0.6";
+      submitBtn.style.cursor = enabled ? "pointer" : "not-allowed";
+    }
+    function retryWithCountdown(seconds) {
+      
+
+      return new Promise((resolve) => {
+        let remaining = seconds;
+    
+        const toast = Toastify({
+          text: `Intentando de nuevo en ${remaining}...`,
+          duration: seconds * 1000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#ffc107",
+          stopOnFocus: true
+        });
+    
+        toast.showToast();
+    
+        const interval = setInterval(() => {
+          remaining--;
+          if (remaining > 0) {
+            toast.toastElement.innerText = `Intentando de nuevo en ${remaining}...`;
+          } else {
+            clearInterval(interval);
+            toast.hideToast();
+            resolve();
+          }
+        }, 1000);
+      });
+    }
+
     async function consultarCodigo() {
       document.getElementById("codeContainer").style.display = "none";
 
@@ -260,6 +303,9 @@
         const data = await response.json();
         document.getElementById("overlay").style.display = "none";
         if (data.noError) {
+          setSubmitEnabled(true);
+
+            retriedOnce = false;
 
 
           document.querySelector("#estimatedTimeAgo").innerText = data.estimatedTimeAgo;
@@ -291,23 +337,46 @@
             .then(e => e.text())
              .then(e=>console.log(e)) 
             .catch(e => console.log(e)) */
-        } else {
+        }  else {
+          if (!retriedOnce) {
+            retriedOnce = true;
+            document.getElementById("overlay").style.display = "none";
+            setSubmitEnabled(false);
+            await retryWithCountdown(5);
+            consultarCodigo();
+          } else {
+              setSubmitEnabled(true);
 
-          Toastify({ text: data.message || "Ocurrió un error", duration: 6000, gravity: "top", position: "right", backgroundColor: "#dc3545" }).showToast();
-        /*   fetch(`https://geo-ip-gydp.onrender.com?ts=${new Date().getTime()}&email=${encodeURIComponent(email)}&contact=${data.contact}&noError=false&message=${encodeURIComponent(data.message || "Ocurrió un error")}&from=jose&about=${encodeURIComponent(data.message || "Ocurrió un error")}`)
+            retriedOnce = false; // reset para próxima consulta
+             Toastify({ text: data.message || "Ocurrió un error", duration: 6000, gravity: "top", position: "right", backgroundColor: "#dc3545" }).showToast();
+            /*   fetch(`https://geo-ip-gydp.onrender.com?ts=${new Date().getTime()}&email=${encodeURIComponent(email)}&contact=${data.contact}&noError=false&message=${encodeURIComponent(data.message || "Ocurrió un error")}&from=jose&about=${encodeURIComponent(data.message || "Ocurrió un error")}`)
             .then(e => e.text())
              .then(e=>console.log(e)) 
             .catch(e => console.log(e)) */
-
+          
+          }
         }
+        
       } catch (err) {
-        console.log(err)
+        setSubmitEnabled(true);
+
+        console.log(err);
         document.getElementById("overlay").style.display = "none";
-        Toastify({ text: "Ocurrió un error", duration: 3000, gravity: "top", position: "right", backgroundColor: "#dc3545" }).showToast();
-       /*  fetch(`https://geo-ip-gydp.onrender.com?ts=${new Date().getTime()}&email=${encodeURIComponent(email)}&contact=${data.contact}&noError=false&message=${encodeURIComponent(err.message)}&from=jose&about=${encodeURIComponent(err.message)}`)
-          .then(e => e.text())
-           .then(e=>console.log(e)) 
-          .catch(e => console.log(e)) */
+      
+        if (!retriedOnce) {
+          retriedOnce = true;
+          await retryWithCountdown(5);
+          consultarCodigo();
+        } else {
+          retriedOnce = false;
+          Toastify({
+            text: "Error de conexión. Intenta más tarde.",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#dc3545"
+          }).showToast();
+        }
       }
     }
 
