@@ -405,25 +405,37 @@
 
     // Al cargar el DOM, se agregan los listeners para guardar en localStorage
     document.addEventListener('DOMContentLoaded', function () {
-      const whatsappInput = document.getElementById("whatsapp");
-      const emailInput = document.getElementById("email");
+  submitBtn = document.querySelector('#contactForm button[type="submit"]');
+  setSubmitEnabled(true);
 
-      // Cargar valores almacenados (si existen)
-      if (localStorage.getItem("whatsapp")) {
-        whatsappInput.value = localStorage.getItem("whatsapp");
-      }
-      if (localStorage.getItem("email")) {
-        emailInput.value = localStorage.getItem("email");
-      }
+  const whatsappInput = document.getElementById("whatsapp");
+  const emailInput = document.getElementById("email");
 
-      // Guardar en localStorage cada vez que cambie el valor de los campos
-      whatsappInput.addEventListener("change", function () {
-        localStorage.setItem("whatsapp", this.value);
-      });
-      emailInput.addEventListener("change", function () {
-        localStorage.setItem("email", this.value);
-      });
-    });
+  // Leer parámetros de la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const contactParam = urlParams.get('contact');
+
+  // Lógica de prioridad para WhatsApp (1. URL, 2. LocalStorage)
+  if (contactParam) {
+    whatsappInput.value = contactParam;
+    localStorage.setItem("whatsapp", contactParam); // Actualiza el local con la prioridad
+  } else if (localStorage.getItem("whatsapp")) {
+    whatsappInput.value = localStorage.getItem("whatsapp");
+  }
+
+  // Carga normal para Email
+  if (localStorage.getItem("email")) {
+    emailInput.value = localStorage.getItem("email");
+  }
+
+  // Listeners para cambios manuales
+  whatsappInput.addEventListener("change", function () {
+    localStorage.setItem("whatsapp", this.value);
+  });
+  emailInput.addEventListener("change", function () {
+    localStorage.setItem("email", this.value);
+  });
+});
   </script>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
